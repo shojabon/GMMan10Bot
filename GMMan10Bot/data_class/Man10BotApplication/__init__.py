@@ -17,7 +17,7 @@ class Man10BotApplication:
 
     def register_knowledge(self, knowledge: Man10BotKnowledge):
         knowledge.application = knowledge
-        self.knowledge[knowledge.id] = knowledge
+        self.knowledge[knowledge.unique_id] = knowledge
 
     def get_path(self, file_name: str = None):
         relative_path = "config/application/" + str(self.name)

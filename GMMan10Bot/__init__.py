@@ -1,6 +1,6 @@
 import json
 
-from GMMan10Bot.applications.Man10BaseKnowledge import Man10BaseKnowledge
+from applications.Man10BaseKnowledge import Man10BaseKnowledge
 from GMMan10Bot.data_class.Man10BotApplication import Man10BotApplication
 
 
