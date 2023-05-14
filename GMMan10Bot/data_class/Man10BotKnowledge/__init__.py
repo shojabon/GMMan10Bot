@@ -21,12 +21,13 @@ class Man10BotKnowledge:
 
     def is_allowed_to_use(self, user_info, message, search_metadata) -> bool:
         return True
+
     def get_data(self) -> str:
         pass
 
     def execute_get_data(self, user_info=None, message=None, search_metadata=None, **kwargs):
-
-        params = {"knowledge_object": self, "user_info": user_info, "message": message, "search_metadata": search_metadata}
+        params = {"knowledge_object": self, "user_info": user_info, "message": message,
+                  "search_metadata": search_metadata}
         # extend kwargs
         params.update(kwargs)
         params.update(self.execution_args)
@@ -45,5 +46,6 @@ class Man10BotKnowledge:
                 del params[arg]
         print(params)
         return self.get_data(**params)
+
     def generate_id(self):
         return str(uuid.uuid4())

@@ -1,7 +1,14 @@
 import json
 
+import numpy as np
+from tqdm import tqdm
+
+from GMMan10Bot.extentions.Man10BotEmbeddings import Man10BotEmbeddings
+from GMMan10Bot.extentions.Man10BotSearch import Man10BotSearch
 from applications.Man10BaseKnowledge import Man10BaseKnowledge
 from GMMan10Bot.data_class.Man10BotApplication import Man10BotApplication
+import openai
+from pymongo import MongoClient
 
 
 class GMMan10Bot:
@@ -11,10 +18,26 @@ class GMMan10Bot:
         with open("config/config.json", "r", encoding="utf-8") as f:
             self.config = json.loads(f.read())
 
+        openai.api_key = self.config["openaiKey"]
+        # load mongodb
+        self.mongo = MongoClient(self.config["mongodb"])
+
+        # load embeddings
+        self.embeddings = Man10BotEmbeddings(self)
+        # load search
+        self.search = Man10BotSearch(self)
+
         self.applications: dict[str, Man10BotApplication] = {}
 
         # load applications
         self.register_application(Man10BaseKnowledge(self))
+
+
+        # load search vectors
+
+        self.search.load_search_vector_to_map()
+
+
 
     def register_application(self, application: Man10BotApplication):
         application_path = application.get_path()
@@ -25,3 +48,9 @@ class GMMan10Bot:
 
         self.applications[application.name] = application
         self.applications[application.name].on_load()
+
+    def get_knowledge_dictionary(self):
+        result = {}
+        for application in self.applications.values():
+            result.update(application.knowledge)
+        return result

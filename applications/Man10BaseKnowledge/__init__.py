@@ -56,7 +56,7 @@ class Man10BaseKnowledge(Man10BotApplication):
             for question in row[2].split("\n"):
                 knowledge = Man10BotKnowledge()
                 knowledge.linked_id = linked_id
-                knowledge.anchor_questions = question
+                knowledge.anchor_questions = [question]
                 knowledge.anchor_keywords = row[1].split("\n")
                 knowledge.execution_args = {"answer": row[3]}
                 knowledge.get_data = get_data
