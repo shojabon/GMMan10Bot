@@ -1,5 +1,6 @@
 import json
 
+from GMMan10Bot.applications.Man10EconomicKnowledge import Man10EconomicKnowledge
 from GMMan10Bot.cores.QABasicCore import QABasicCore
 from GMMan10Bot.extentions.Man10BotEmbeddings import Man10BotEmbeddings
 from GMMan10Bot.extentions.Man10BotSearch import Man10BotSearch
@@ -29,7 +30,7 @@ class GMMan10Bot:
 
         # load applications
         self.register_application(Man10BaseKnowledge(self))
-
+        self.register_application(Man10EconomicKnowledge(self))
 
         # load search vectors
 
@@ -37,7 +38,7 @@ class GMMan10Bot:
 
         self.core = QABasicCore(self)
 
-        print(self.core.generate_response("まんぼ、ギャンブラーランクになる方法は？"))
+        print(self.core.generate_response(""))
 
 
     def register_application(self, application: Man10BotApplication):
@@ -54,4 +55,5 @@ class GMMan10Bot:
         result = {}
         for application in self.applications.values():
             result.update(application.knowledge)
+        print(len(result))
         return result
