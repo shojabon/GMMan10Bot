@@ -48,19 +48,19 @@ class Man10BaseKnowledge(Man10BotApplication):
         for row in [x for x in reader][1:]:
             linked_id = str(uuid.uuid4())
 
-            def get_data(knowledge_object: Man10BotKnowledge, answer: str):
+            def get_data(question: str, knowledge_object: Man10BotKnowledge, answer: str):
                 data = ConversationalKnowledge()
-                data.question = knowledge_object.anchor_questions
+                data.question = self.main.embeddings.get_most_similar(question, knowledge_object.anchor_questions)
                 data.answer = answer
                 return data
-            for question in row[2].split("\n"):
-                knowledge = Man10BotKnowledge()
-                knowledge.linked_id = linked_id
-                knowledge.anchor_questions = [question]
-                knowledge.anchor_keywords = row[1].split("\n")
-                knowledge.execution_args = {"answer": row[3]}
-                knowledge.get_data = get_data
 
-                self.register_knowledge(knowledge)
+            knowledge = Man10BotKnowledge()
+            knowledge.linked_id = linked_id
+            knowledge.anchor_questions = row[2].split("\n")
+            knowledge.anchor_keywords = row[1].split("\n")
+            knowledge.execution_args = {"answer": row[3]}
+            knowledge.get_data = get_data
+            self.register_knowledge(knowledge)
 
         file.close()
+

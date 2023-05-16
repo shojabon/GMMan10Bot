@@ -1,11 +1,9 @@
 import json
 
-import numpy as np
-from tqdm import tqdm
-
+from GMMan10Bot.cores.QABasicCore import QABasicCore
 from GMMan10Bot.extentions.Man10BotEmbeddings import Man10BotEmbeddings
 from GMMan10Bot.extentions.Man10BotSearch import Man10BotSearch
-from applications.Man10BaseKnowledge import Man10BaseKnowledge
+from GMMan10Bot.applications.Man10BaseKnowledge import Man10BaseKnowledge
 from GMMan10Bot.data_class.Man10BotApplication import Man10BotApplication
 import openai
 from pymongo import MongoClient
@@ -37,6 +35,9 @@ class GMMan10Bot:
 
         self.search.load_search_vector_to_map()
 
+        self.core = QABasicCore(self)
+
+        print(self.core.generate_response("まんぼ、ギャンブラーランクになる方法は？"))
 
 
     def register_application(self, application: Man10BotApplication):

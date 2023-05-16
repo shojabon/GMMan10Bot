@@ -3,6 +3,7 @@ from __future__ import annotations
 import traceback
 from typing import TYPE_CHECKING
 
+import numpy as np
 import openai
 from cleantext import clean
 
@@ -43,8 +44,8 @@ class Man10BotEmbeddings:
 
             cache = self.main.mongo["man10bot"]["ada_embedding_cache"].find({"text": {"$in": [x for x in text if result[x] is None]}})
             for cache_data in cache:
-                result[cache_data["text"]] = cache_data
-                self.memory_cache[cache_data["text"]] = cache_data
+                result[cache_data["text"]] = cache_data["embedding"]
+                self.memory_cache[cache_data["text"]] = cache_data["embedding"]
 
             text = [x for x in text if result[x] is None]
             remaining_result = {}
@@ -64,10 +65,31 @@ class Man10BotEmbeddings:
             self.main.mongo["man10bot"]["ada_embedding_cache"].insert_many(insert_data)
             cache = self.main.mongo["man10bot"]["ada_embedding_cache"].find({"text": {"$in": text}})
             for cache_data in cache:
-                result[cache_data["text"]] = cache_data
-                self.memory_cache[cache_data["text"]] = cache_data
+                result[cache_data["text"]] = cache_data["embedding"]
+                self.memory_cache[cache_data["text"]] = cache_data["embedding"]
             return result
         except Exception:
             traceback.print_exc()
             print(text)
             return result
+
+    def get_most_similar(self, text: str, data: list[str]):
+        # remove all "" from data
+        data = [x for x in data if x != '']
+        text_vector = self.get_ada_embedding_of_text(text)
+        if text_vector is None:
+            return None
+        data_embeddings = self.get_ada_embedding_of_text_batch(data)
+        if len(data_embeddings) == 0:
+            return None
+
+        data_vectors = []
+        for data_text in data:
+            data_vectors.append(data_embeddings[data_text])
+        text_vector, data_vector = np.array(text_vector), np.array(data_vectors)
+
+        result = np.dot(data_vector, text_vector)
+        result = np.argsort(result)[::-1]
+
+        # return the most similar text
+        return data[result[0]]

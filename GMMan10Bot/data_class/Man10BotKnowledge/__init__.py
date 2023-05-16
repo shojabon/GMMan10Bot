@@ -5,6 +5,8 @@ from enum import Enum
 from typing import TYPE_CHECKING
 import uuid
 
+from GMMan10Bot.data_class.Man10BotKnowledgeData import MetaKnowledge, ConversationalKnowledge
+
 if TYPE_CHECKING:
     from GMMan10Bot.data_class.Man10BotApplication import Man10BotApplication
 
@@ -19,14 +21,14 @@ class Man10BotKnowledge:
         self.anchor_keywords = []
         self.execution_args = {}
 
-    def is_allowed_to_use(self, user_info, message, search_metadata) -> bool:
+    def is_allowed_to_use(self, question, user_info, search_metadata) -> bool:
         return True
 
-    def get_data(self) -> str:
+    def get_data(self) -> ConversationalKnowledge | MetaKnowledge:
         pass
 
-    def execute_get_data(self, user_info=None, message=None, search_metadata=None, **kwargs):
-        params = {"knowledge_object": self, "user_info": user_info, "message": message,
+    def execute_get_data(self, question=None, user_info=None, search_metadata=None, **kwargs):
+        params = {"knowledge_object": self, "user_info": user_info, "question": question,
                   "search_metadata": search_metadata}
         # extend kwargs
         params.update(kwargs)
@@ -44,7 +46,6 @@ class Man10BotKnowledge:
         for arg in list(params.keys()):
             if arg not in function_args:
                 del params[arg]
-        print(params)
         return self.get_data(**params)
 
     def generate_id(self):

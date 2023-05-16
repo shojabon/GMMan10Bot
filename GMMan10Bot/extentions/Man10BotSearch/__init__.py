@@ -7,6 +7,8 @@ import numpy as np
 import openai
 from cleantext import clean
 
+from GMMan10Bot.data_class.Man10BotKnowledge import Man10BotKnowledge
+
 if TYPE_CHECKING:
     from GMMan10Bot import GMMan10Bot
 
@@ -24,15 +26,15 @@ class Man10BotSearch:
                 vector = self.main.embeddings.get_ada_embedding_of_text(question)
                 if vector is None:
                     continue
-                self.knowledge_vector.append(vector["embedding"])
+                self.knowledge_vector.append(vector)
                 self.knowledge_ids.append(knowledge.unique_id)
 
         self.knowledge_vector, self.knowledge_ids = np.array(self.knowledge_vector), np.array(self.knowledge_ids)
 
-    def search_knowledge(self, question: str):
+    def search_knowledge(self, question: str) -> list[Man10BotKnowledge]:
         all_knowledge = self.main.get_knowledge_dictionary()
 
-        question_vector = self.main.embeddings.get_ada_embedding_of_text(question)["embedding"]
+        question_vector = self.main.embeddings.get_ada_embedding_of_text(question)
         result = np.dot(self.knowledge_vector, question_vector)
         result = np.argsort(result)[::-1]
 
